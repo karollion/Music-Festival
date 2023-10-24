@@ -1,64 +1,86 @@
+const Concert = require('../models/concert.model');
 
-//concerts
-const express = require('express');
-const router = express.Router();
-const db = require('./../db');
+exports.getAll = async (req, res) => {
+  try {
+    res.json(await Concert.find());
+  }
+  catch(err) {
+    res.status(500).json({ message: err });
+  }
+};
 
-// get all concerts
-router.route('/concerts').get((req, res) => {
-  res.json(db.concerts);
-});
+exports.getRandom = async (req, res) => {
+  try {
+    const count = await Concert.countDocuments();
+    const rand = Math.floor(Math.random() * count);
+    const con = await Concert.findOne().skip(rand);
+    if(!con) res.status(404).json({ message: 'Not found' });
+    else res.json(con);
+  }
+  catch(err) {
+    res.status(500).json({ message: err });
+  }
+};
 
-//get one random concert
-router.route('/concerts/random').get((req, res) => {
-  const random = Math.floor(Math.random() * db.concerts.length)
-  res.json(db.concerts[random])
-})
+exports.getOne = async (req, res) => {
+  try {
+    const con = await Concert.findById(req.params.id);
+    if(!con) res.status(404).json({ message: 'Not found' });
+    else res.json(con);
+  }
+  catch(err) {
+    res.status(500).json({ message: err });
+  }
+};
 
-// get one concert
-router.route('/concerts/:id').get((req, res) => {
-  const id = Number(req.params.id)
-	const concert = db.concerts.find(element => element.id === id)
-	if (!concert) {
-		return res.status(404).json({ message: 'Invalid ID' })
-	}
-	res.json(concert)
-});
+exports.postOne = async (req, res) => {
+  try {
+    const { id, performer, genre, price, day, image } = req.body;
+    const newConcert = new Concert({ 
+      id: id, 
+      performer: performer, 
+      genre: genre, 
+      price: price, 
+      day: day, 
+      image: image });
+    await newConcert.save();
+    res.send( newConcert );
+  } catch(err) {
+    res.status(500).json({ message: err });
+  }
+};
 
-// post one concert to db
-router.route('/concerts').post((req, res) => {
-	const id = db.concerts[db.concerts.length - 1].id + 1;
-	const newconcert = Object.assign({ id: id }, req.body);
-	db.concerts.push(newconcert);
-	res.status(201).json({ message: 'OK' });
-});
+exports.putOne = async (req, res) => {
+  const { id, performer, genre, price, day, image } = req.body;
+  try {
+    const con = await Concert.findById(req.params.id);
+    if(con) {
+      con.id = id;
+      con.performer = performer;
+      con.genre = genre;
+      con.price = price;
+      con.day = day;
+      con.image = image;
+      await con.save();
+      res.send( con );
+    }
+    else res.status(404).json({ message: 'Not found...' });
+  }
+  catch(err) {
+    res.status(500).json({ message: err });
+  }
+};
 
-// change one concert on db
-router.route('/concerts/:id').put((req, res) => {
-	const { author, text } = req.body
-	const id = Number(req.params.id)
-	const concert = db.concerts.find(element => element.id === id)
-	const index = db.concerts.indexOf(concert)
-	if (!concert) {
-		return res.status(404).json({ message: 'Invalid ID' })
-	} else {
-		db.concerts[index] = { ...concert, author, text }
-		res.json({ message: 'data changed' })
-	}
-})
-
-// Remove one concert from db
-router.route('/concerts/:id').delete((req, res) => {
-	const id = Number(req.params.id)
-	const concert = db.concerts.find(element => element.id === id)
-	const index = db.concerts.indexOf(concert)
-
-	if (!concert) {
-		return res.status(404).json({ message: 'Invalid ID' })
-	} else {
-		db.concerts.splice(index, 1)
-		res.json({ message: 'OK, deleted' })
-	}
-})
-
-module.exports = router;
+exports.deleteOne = async (req, res) => {
+  try {
+    const con = await Concert.findById(req.params.id);
+    if(con) {
+      await Concert.deleteOne({ _id: req.params.id });
+      res.send( con );
+    }
+    else res.status(404).json({ message: 'Not found...' });
+  }
+  catch(err) {
+    res.status(500).json({ message: err });
+  }
+};
