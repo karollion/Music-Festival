@@ -35,7 +35,7 @@ app.use('/api', concertsRoutes); // add concerts routes to server
 app.use('/api', seatsRoutes); // add seats routes to server
 
 // connects our backend code with the database
-mongoose.connect('mongodb://0.0.0.0:27017/NewWaveDB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://karollion:RMDDvHbkjPwNlPsx@cluster0.pbd1wk2.mongodb.net/NewWaveDB?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 
 db.once('open', () => {
