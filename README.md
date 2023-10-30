@@ -14,4 +14,4 @@ Server run on `localhost:3030`
 
 Roads to collections: `testimonials` `concerts` `seats`
 
-Project page: [Music Festival](https://music-festival.karollion.repl.co/order-a-ticket)
+Project page: [Music Festival](https://music-festival.karollion.repl.co)

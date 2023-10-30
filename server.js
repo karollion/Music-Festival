@@ -35,7 +35,14 @@ app.use('/api', concertsRoutes); // add concerts routes to server
 app.use('/api', seatsRoutes); // add seats routes to server
 
 // connects our backend code with the database
-mongoose.connect('mongodb+srv://karollion:RMDDvHbkjPwNlPsx@cluster0.pbd1wk2.mongodb.net/NewWaveDB?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
+const NODE_ENV = process.env.NODE_ENV;
+let dbUri = '';
+
+if(NODE_ENV === 'production') dbUri = 'mongodb+srv://karollion:RMDDvHbkjPwNlPsx@cluster0.pbd1wk2.mongodb.net/NewWaveDB?retryWrites=true&w=majority';
+else if(NODE_ENV === 'test') dbUri = 'mongodb://0.0.0.0:27017/NewWaveDBtest';
+else dbUri = 'mongodb://0.0.0.0:27017/NewWaveDB';
+
+mongoose.connect(dbUri, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 
 db.once('open', () => {
@@ -54,3 +61,5 @@ app.use((req, res) => {
 io.on('connection', socket => {
 	console.log('New client' + socket.id)
 })
+
+module.exports = server;
