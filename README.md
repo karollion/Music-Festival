@@ -8,6 +8,8 @@ To install the project use the command: `yarn install` or `npm install`
 
 To start the project use the command: `yarn start`
 
+To start tests use command: `yarn test`
+
 Server uses `MongoDB` and `Mongoose`
 
 Server run on `localhost:3030`
