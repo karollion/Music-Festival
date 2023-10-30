@@ -48,7 +48,7 @@ exports.getArtistConcerts = async (req, res) => {
 // Search for concerts of a selected music genre
 exports.getGenreConcerts = async (req, res) => {
   try {
-    const con = await Concert.findById(req.params.id);
+    const con = await Concert.find({genre: req.params.genre});
     if(!con) res.status(404).json({ message: 'Not found' });
     else res.json(con);
   }
@@ -60,7 +60,7 @@ exports.getGenreConcerts = async (req, res) => {
 // Search for concerts with a price in the range :price_min - :price_max,
 exports.getPriceRangeConcerts = async (req, res) => {
   try {
-    const con = await Concert.findById(req.params.id);
+    const con = await Concert.find({price: {$gt: req.params.price_min, $lt: req.params.price_max}});
     if(!con) res.status(404).json({ message: 'Not found' });
     else res.json(con);
   }
@@ -71,8 +71,9 @@ exports.getPriceRangeConcerts = async (req, res) => {
 
 // Search for concerts on a selected date
 exports.getDayConcerts = async (req, res) => {
+  const day = Number(req.params.day);
   try {
-    const con = await Concert.findById(req.params.id);
+    const con = await Concert.find({day: day});
     if(!con) res.status(404).json({ message: 'Not found' });
     else res.json(con);
   }
