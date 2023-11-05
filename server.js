@@ -4,6 +4,7 @@ const path = require('path')
 const cors = require('cors')
 const socket = require('socket.io')
 const mongoose = require('mongoose');
+const helmet = require('helmet');
 
 // import routes
 const testimonialsRoutes = require('./routes/testimonials.routes');
@@ -11,7 +12,10 @@ const concertsRoutes = require('./routes/concerts.routes');
 const seatsRoutes = require('./routes/seats.routes');
 
 const app = express();
-app.use(cors());// middleware for diferent ports client and server
+app.use(helmet());
+
+// middleware for diferent ports client and server
+app.use(cors());
 
 const server = app.listen('3030', () => {
   console.log('Server is running on port: 3030');
